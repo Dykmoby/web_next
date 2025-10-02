@@ -8,7 +8,7 @@ export const getGroupsDb = async (): Promise<GroupInterface[]> => {
   const db = new sqlite3.Database(process.env.DB ?? './db/vki-web.db');
 
   const groups = await new Promise((resolve, reject) => {
-    const sql = 'SELECT * FROM class';
+    const sql = 'SELECT * FROM groups';
     db.all(sql, [], (err, rows) => {
       if (err) {
         reject(err);
