@@ -3,13 +3,16 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { deleteStudentApi, getStudentsApi } from '@/api/studentsApi';
+import { deleteStudentApi, getStudentsApi, addStudentApi } from '@/api/studentsApi';
 import type StudentInterface from '@/types/StudentInterface';
 import isServer from '@/utils/isServer';
+import sqlite3 from 'sqlite3';
+import FioInterface from '@/types/FioInterface';
 
 interface StudentsHookInterface {
   students: StudentInterface[];
   deleteStudentMutate: (studentId: number) => void;
+  addStudent: (student: StudentInterface) => void;
 }
 
 const useStudents = (): StudentsHookInterface => {
@@ -69,10 +72,21 @@ const useStudents = (): StudentsHookInterface => {
     // },
   });
 
+  /**
+   * добавление студента
+   */
+    const addStudent = async (student: StudentInterface) => {
+      await addStudentApi(student);
+      if (isServer()) return;
+      await refetch();
+  };
+
   return {
     students: data ?? [],
     deleteStudentMutate: deleteStudentMutate.mutate,
+    addStudent,
   };
 };
+
 
 export default useStudents;

@@ -17,6 +17,9 @@ const Menu = (): React.ReactElement => {
       <div className={pathname === '/students' ? styles.linkActive : ''}>
         <Link href="/students">Студенты</Link>
       </div>
+      <div className={pathname === '/add-student' ? styles.linkActive : ''}>
+        <Link href="/add-student">Добавить студента</Link>
+      </div>
     </nav>
   );
 };

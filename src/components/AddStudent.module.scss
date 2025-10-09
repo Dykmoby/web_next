@@ -1,0 +1,11 @@
+.AddStudent {
+  margin: 10px 0;
+  gap: 20px;
+  width: 100%;
+  max-width: var(--max-width);
+  display: flex;
+  flex-direction: column;
+  align-items:start;
+  justify-content: center;
+  text-align: center;
+}

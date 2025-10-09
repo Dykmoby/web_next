@@ -3,6 +3,7 @@ import sqlite3 from 'sqlite3';
 import type StudentInterface from '@/types/StudentInterface';
 import getRandomFio from '@/utils/getRandomFio';
 import FioInterface from '@/types/FioInterface';
+import { promises } from 'dns';
 
 sqlite3.verbose();
 
@@ -50,6 +51,28 @@ export const deleteStudentDb = async (studentId: number): Promise<number> => {
   });
 
   return studentId;
+};
+
+export const addStudentDb = async (student: StudentInterface): Promise<StudentInterface> => {
+  const db = new sqlite3.Database(process.env.DB ?? './db/vki-web.db');
+
+  const newStudent = await new Promise<StudentInterface>((resolve, reject) => {
+    db.run(
+      'INSERT INTO student (firstName, lastName, middleName, groupId) VALUES (?, ?, ?, ?)',
+      [student.firstName, student.lastName, student.middleName, 0],
+      function (err) {
+        if (err) {
+          reject(err);
+          db.close();
+          return;
+        }
+        resolve({ ...student, id: this.lastID });
+        db.close();
+      }
+    );
+  });
+
+  return newStudent;
 };
 
 /**
