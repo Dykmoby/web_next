@@ -12,7 +12,7 @@ import FioInterface from '@/types/FioInterface';
 interface StudentsHookInterface {
   students: StudentInterface[];
   deleteStudentMutate: (studentId: number) => void;
-  addStudent: (student: StudentInterface) => void;
+  addStudentMutate: (student: StudentInterface) => void;
 }
 
 const useStudents = (): StudentsHookInterface => {
@@ -75,16 +75,14 @@ const useStudents = (): StudentsHookInterface => {
   /**
    * добавление студента
    */
-    const addStudent = async (student: StudentInterface) => {
-      await addStudentApi(student);
-      if (isServer()) return;
-      await refetch();
-  };
+    const addStudentMutate = useMutation({
+      mutationFn: async (student: StudentInterface) => addStudentApi(student)
+  });
 
   return {
     students: data ?? [],
     deleteStudentMutate: deleteStudentMutate.mutate,
-    addStudent,
+    addStudentMutate: addStudentMutate.mutate
   };
 };
 

@@ -13,8 +13,8 @@ const AddStudent = (): React.ReactElement => {
     formState: { errors },
   } = useForm<StudentInterface>()
 
-  const { addStudent } = useStudents();
-  const onSubmit: SubmitHandler<StudentInterface> = (data) => addStudent(data)
+  const { addStudentMutate } = useStudents();
+  const onSubmit: SubmitHandler<StudentInterface> = (data) => addStudentMutate(data)
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={`${styles.AddStudent}`}>
