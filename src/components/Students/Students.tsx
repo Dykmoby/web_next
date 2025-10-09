@@ -4,7 +4,6 @@ import useStudents from '@/hooks/useStudents';
 import Student from '@/components/Students/Student/Student'
 import type StudentInterface from '@/types/StudentInterface';
 import styles from './Students.module.scss';
-import {deleteStudentApi} from '@/api/studentsApi';
 
 const Students = (): React.ReactElement => {
   const { students, deleteStudentMutate } = useStudents();
