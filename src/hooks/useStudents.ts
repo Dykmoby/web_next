@@ -3,11 +3,8 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { deleteStudentApi, getStudentsApi, addStudentApi } from '@/api/studentsApi';
+import { addStudentApi, deleteStudentApi, getStudentsApi } from '@/api/studentsApi';
 import type StudentInterface from '@/types/StudentInterface';
-import isServer from '@/utils/isServer';
-import sqlite3 from 'sqlite3';
-import FioInterface from '@/types/FioInterface';
 
 interface StudentsHookInterface {
   students: StudentInterface[];
@@ -35,7 +32,7 @@ const useStudents = (): StudentsHookInterface => {
       await queryClient.cancelQueries({ queryKey: ['students'] });
       // получаем данные из TanStackQuery
       const previousStudents = queryClient.getQueryData<StudentInterface[]>(['students']);
-      let updatedStudents = [...(previousStudents ?? [])] ;
+      let updatedStudents = [...(previousStudents ?? [])];
 
       if (!updatedStudents) return;
 
@@ -47,14 +44,21 @@ const useStudents = (): StudentsHookInterface => {
       // обновляем данные в TanStackQuery
       queryClient.setQueryData<StudentInterface[]>(['students'], updatedStudents);
 
+      console.log('deleteStudentMutate onMutate', previousStudents, updatedStudents);
+      debugger;
+
       return { previousStudents, updatedStudents };
     },
     onError: (err, variables, context) => {
+      console.log('deleteStudentMutate onError', err);
+      debugger;
       console.log('>>> deleteStudentMutate  err', err);
       queryClient.setQueryData<StudentInterface[]>(['students'], context?.previousStudents);
     },
     // обновляем данные в случаи успешного выполнения mutationFn: async (studentId: number) => deleteStudentApi(studentId),
     onSuccess: async (studentId, variables, { previousStudents }) => {
+      console.log('deleteStudentMutate onSuccess', studentId);
+      debugger;
       await queryClient.cancelQueries({ queryKey: ['students'] });
       // вариант 1 - запрос всех записей
       // refetch();
@@ -72,19 +76,51 @@ const useStudents = (): StudentsHookInterface => {
     // },
   });
 
-  /**
-   * добавление студента
-   */
-    const addStudentMutate = useMutation({
-      mutationFn: async (student: StudentInterface) => addStudentApi(student)
+  const addStudentMutate = useMutation({
+    mutationFn: async (student: StudentInterface) => addStudentApi(student),
+
+    onMutate: async (student: StudentInterface) => {
+      await queryClient.cancelQueries({ queryKey: ['students'] });
+      // получаем данные из TanStackQuery
+      const previousStudents = queryClient.getQueryData<StudentInterface[]>(['students']);
+      const updatedStudents = [...(previousStudents ?? [])];
+
+      if (!updatedStudents) return;
+
+      // добавляем временную запись
+      updatedStudents.push({
+        ...student,
+        isNew: true,
+      });
+      // обновляем данные в TanStackQuery
+      queryClient.setQueryData<StudentInterface[]>(['students'], updatedStudents);
+
+      return { previousStudents, updatedStudents };
+    },
+    onError: (err, variables, context) => {
+      console.log('>>> deleteStudentMutate  err', err);
+      queryClient.setQueryData<StudentInterface[]>(['students'], context?.previousStudents);
+    },
+    // обновляем данные в случаи успешного выполнения mutationFn: async (student: StudentInterface) => addStudentApi(student)
+    onSuccess: async (newStudent, variables, { previousStudents }) => {
+      refetch();
+      // await queryClient.cancelQueries({ queryKey: ['students'] });
+
+      // if (!previousStudents) {
+      //   queryClient.setQueryData<StudentInterface[]>(['students'], [newStudent]);
+      //   return;
+      // }
+
+      // const updatedStudents = [...previousStudents.filter(s => s.id !== -1), newStudent];
+      // queryClient.setQueryData<StudentInterface[]>(['students'], updatedStudents);
+    },
   });
 
   return {
     students: data ?? [],
     deleteStudentMutate: deleteStudentMutate.mutate,
-    addStudentMutate: addStudentMutate.mutate
+    addStudentMutate: addStudentMutate.mutate,
   };
 };
-
 
 export default useStudents;
