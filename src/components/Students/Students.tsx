@@ -1,5 +1,6 @@
-'use client';
+"use client";
 
+import { useRouter } from 'next/navigation';
 import useStudents from '@/hooks/useStudents';
 import type StudentInterface from '@/types/StudentInterface';
 import styles from './Students.module.scss';
@@ -23,6 +24,12 @@ const Students = (): React.ReactElement => {
     }
   };
 
+  const router = useRouter();
+
+  const onGoToPageHandler = (studentId: number): void => {
+    router.push(`/students/${studentId}`);
+  };
+
   const onAddHandler = (studentFormField: FormFields): void => {
     debugger;
     console.log('Добавление студента', studentFormField);
@@ -44,6 +51,7 @@ const Students = (): React.ReactElement => {
           key={student.id || student.uuid}
           student={student}
           onDelete={onDeleteHandler}
+          onGoToPage={onGoToPageHandler}
         />
       ))}
     </div>

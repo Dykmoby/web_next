@@ -1,8 +1,7 @@
 .Student {
   margin: 10px 0;
-  display: grid;
+  display: flex;
   gap: 10px;
-  grid-template-columns: 370px auto;
 
   transition: opacity 0.9s ease-in-out;
 }
