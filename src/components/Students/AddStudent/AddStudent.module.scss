@@ -1,11 +1,11 @@
 $width: 400px;
 
 .AddStudent {
-  margin-bottom: 30px;
-  width: 400px;
-
+  display: flex;
+  margin-bottom: 80px;
+  width: calc($width + 200px);
   input {
-    width: calc($width - 8px);
+    width: calc($width - 48px);
   }
 
   input[type=submit] {
