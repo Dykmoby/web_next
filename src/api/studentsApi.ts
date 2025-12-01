@@ -19,7 +19,6 @@ export const getStudentsApi = async (): Promise<StudentInterface[]> => {
 export const deleteStudentApi = async (studentId: number): Promise<number> => {
   console.log('deleteStudentApi', studentId);
   debugger;
-
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API}students/${studentId}`, {
       method: 'DELETE',
@@ -30,6 +29,7 @@ export const deleteStudentApi = async (studentId: number): Promise<number> => {
     }
     console.log('deleteStudentApi ok', studentId);
     debugger;
+
     return studentId;
   }
   catch (err) {
@@ -55,5 +55,23 @@ export const addStudentApi = async (student: StudentInterface): Promise<StudentI
   catch (err) {
     console.log('>>> addStudentApi', err);
     throw err;
+  }
+};
+
+export const getStudentByIdApi = async (id: string): Promise<StudentInterface | null> => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API}students/${id}`, {
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return await response.json();
+  }
+  catch (error) {
+    console.error('Error fetching student:', error);
+    return null;
   }
 };
